@@ -1,0 +1,14 @@
+# Minimal Supabase CLI config for local development (`supabase start`).
+# Values not listed here use the CLI defaults.
+project_id = "wholesale-catalog"
+
+[auth]
+site_url = "http://localhost:3000"
+# Admin accounts are created by hand; nobody can sign up from the site.
+enable_signup = false
+
+[auth.email]
+enable_signup = false
+
+[storage]
+file_size_limit = "5MiB"
