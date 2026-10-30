@@ -42,7 +42,7 @@ const ar = {
   },
   product: {
     backToCatalog: "العودة إلى الكتالوج",
-    unitPrice: "{price} درهم للوحدة",
+    unitPrice: "{price} بالجملة",
     chooseVariant: "اختر النوع / اللون",
     variantRequired: "يرجى اختيار نوع قبل الإضافة.",
     quantity: "الكمية",

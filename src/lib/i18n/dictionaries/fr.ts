@@ -46,7 +46,7 @@ const fr: Dictionary = {
   },
   product: {
     backToCatalog: "Retour au catalogue",
-    unitPrice: "{price} DH / unité",
+    unitPrice: "{price} en gros",
     chooseVariant: "Choisissez un modèle / une couleur",
     variantRequired: "Veuillez choisir un modèle avant d'ajouter.",
     quantity: "Quantité",
