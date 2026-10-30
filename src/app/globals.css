@@ -53,6 +53,23 @@ body {
   display: none;
 }
 
+/* Always-visible scrollbar for horizontal product rows. */
+.product-slider {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+.product-slider::-webkit-scrollbar {
+  height: 8px;
+}
+.product-slider::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border-radius: 999px;
+}
+.product-slider::-webkit-scrollbar-track {
+  background: var(--color-line);
+  border-radius: 999px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

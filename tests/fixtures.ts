@@ -15,6 +15,7 @@ export function product(overrides: Partial<Product> = {}): Product {
     name_fr: "Casquette",
     description_ar: null,
     description_fr: null,
+    wholesale_price: 40,
     is_available: true,
     in_stock: true,
     is_published: true,

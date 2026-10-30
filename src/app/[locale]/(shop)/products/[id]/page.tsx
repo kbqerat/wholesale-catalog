@@ -3,10 +3,13 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { AddToSelection } from "@/components/shop/add-to-selection";
+import { ProductCard } from "@/components/shop/product-card";
 import { ProductGallery } from "@/components/shop/product-gallery";
+import { ProductSlider } from "@/components/shop/product-slider";
 import { Badge, Notice } from "@/components/ui";
 import { getCatalog } from "@/lib/catalog/queries";
-import { isLocale, pickLocalized, type Locale } from "@/lib/i18n/config";
+import { formatPrice } from "@/lib/format";
+import { interpolate, isLocale, pickLocalized, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/get-dictionary";
 
 export default function ProductPage({ params }: PageProps<"/[locale]/products/[id]">) {
@@ -26,7 +29,12 @@ async function ProductDetail({ params }: Pick<PageProps<"/[locale]/products/[id]
 
   const category = catalog.categories.find((c) => c.id === product.category_id);
   const name = pickLocalized(locale, product.name_ar, product.name_fr);
-  const description = pickLocalized(locale, product.description_ar, product.description_fr);
+  // Other available products, same category first (sort is stable, so the
+  // catalog order is kept within each group).
+  const others = catalog.products
+    .filter((p) => p.id !== product.id && p.is_available)
+    .sort((a, b) => Number(b.category_id === product.category_id) - Number(a.category_id === product.category_id))
+    .slice(0, 12);
 
   return (
     <article className="space-y-5">
@@ -43,7 +51,11 @@ async function ProductDetail({ params }: Pick<PageProps<"/[locale]/products/[id]
               <p className="text-sm font-medium text-muted">{locale === "fr" ? category.name_fr : category.name_ar}</p>
             )}
             <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{name}</h1>
-            <p className="text-sm text-muted">{dict.product.priceOnWhatsApp}</p>
+            {product.wholesale_price != null && (
+              <p className="num text-xl font-bold text-brand">
+                {interpolate(dict.product.unitPrice, { price: formatPrice(product.wholesale_price, locale) })}
+              </p>
+            )}
             <div className="flex flex-wrap items-center gap-3 pt-1">
               <span>
                 {product.is_available ? (
@@ -58,15 +70,31 @@ async function ProductDetail({ params }: Pick<PageProps<"/[locale]/products/[id]
           <div className="rounded-2xl border border-line bg-surface p-4 sm:p-5">
             <AddToSelection product={product} />
           </div>
-
-          {description && (
-            <section className="space-y-2">
-              <h2 className="text-base font-semibold">{dict.product.description}</h2>
-              <p className="whitespace-pre-line text-[15px] leading-relaxed text-ink/85">{description}</p>
-            </section>
-          )}
         </div>
       </div>
+
+      {others.length > 0 && (
+        <section className="space-y-3 border-t border-line pt-6" aria-labelledby="other-products">
+          <h2 id="other-products" className="text-lg font-bold">
+            {dict.product.otherProducts}
+          </h2>
+          <ProductSlider
+            label={dict.product.otherProducts}
+            prevLabel={dict.product.scrollPrev}
+            nextLabel={dict.product.scrollNext}
+          >
+            {others.map((p) => (
+              <ProductCard
+                key={p.id}
+                product={p}
+                locale={locale}
+                dict={dict}
+                className="w-40 shrink-0 snap-start sm:w-52"
+              />
+            ))}
+          </ProductSlider>
+        </section>
+      )}
     </article>
   );
 }

@@ -22,6 +22,8 @@ export type Product = {
   name_fr: string | null;
   description_ar: string | null;
   description_fr: string | null;
+  /** Price of one unit in MAD; null when the seller has not set one. */
+  wholesale_price: number | null;
   /**
    * In the public catalog: manual switch AND stock > 0 (see getCatalog).
    * In the admin: the seller's manual switch only.

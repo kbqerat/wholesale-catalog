@@ -64,6 +64,20 @@ export const stockSchema = z
     return Number(text);
   });
 
+/** Price of one unit in MAD, up to 2 decimals. Empty means "not set". */
+export const priceSchema = z
+  .union([z.string(), z.number(), z.null()])
+  .optional()
+  .transform((v, ctx) => {
+    const text = String(v ?? "").trim().replace(/\s/g, "").replace(",", ".");
+    if (text === "") return null;
+    if (!/^\d{1,6}(\.\d{1,2})?$/.test(text)) {
+      ctx.addIssue({ code: "custom", message: "invalid_price" });
+      return z.NEVER;
+    }
+    return Number(text);
+  });
+
 export const IMAGE_PATH_RE = /^products\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|jpeg|png|webp|avif)$/;
 export const MAX_IMAGES = 12;
 export const MAX_VARIANTS = 50;
@@ -89,6 +103,7 @@ export const productSchema = z
     name_fr: optionalLine(120),
     description_ar: optionalText(2000),
     description_fr: optionalText(2000),
+    wholesale_price: priceSchema,
     stock_quantity: stockSchema,
     is_available: z.boolean(),
     is_published: z.boolean(),

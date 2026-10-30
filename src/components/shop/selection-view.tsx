@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, ListChecks, MessageCircle, Trash2 } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { ProductImage } from "@/components/product-image";
-import { QuantityStepper } from "@/components/quantity-stepper";
+import { QuantityInput } from "@/components/quantity-input";
 import { EmptyState, Notice, buttonClass } from "@/components/ui";
 import { getSelectionProducts } from "@/lib/catalog/actions";
 import { pickLocalized } from "@/lib/i18n/config";
@@ -227,14 +227,13 @@ function SelectionRow({ item }: { item: SelectionItem }) {
           </p>
         ) : (
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <QuantityStepper
+            <QuantityInput
               id={`qty-${item.key}`}
               size="sm"
               value={item.quantity}
               onChange={(quantity) => dispatchSelection({ type: "setQuantity", key: item.key, quantity })}
               label={t(dict.selection.quantityFor, { name })}
-              decreaseLabel={dict.product.decrease}
-              increaseLabel={dict.product.increase}
+              placeholder={dict.product.quantity}
             />
           </div>
         )}

@@ -36,8 +36,16 @@ describe("productSchema", () => {
   it("accepts a valid product and normalises optional fields to null", () => {
     const data = productSchema.parse(validProduct());
     expect(data).toMatchObject({ name_fr: null, description_ar: null });
-    expect(data).not.toHaveProperty("wholesale_price");
+    expect(data.wholesale_price).toBeNull();
     expect(data).not.toHaveProperty("min_quantity");
+  });
+
+  it("parses the unit price (comma or dot decimals)", () => {
+    expect(productSchema.parse(validProduct({ wholesale_price: "12,5" })).wholesale_price).toBe(12.5);
+    expect(productSchema.parse(validProduct({ wholesale_price: " 40 " })).wholesale_price).toBe(40);
+    const result = productSchema.safeParse(validProduct({ wholesale_price: "-3" }));
+    expect(result.success).toBe(false);
+    expect(result.error && toFieldErrors(result.error)).toMatchObject({ wholesale_price: "invalid_price" });
   });
 
   it("reports field errors as dictionary keys", () => {

@@ -18,9 +18,7 @@ import { isLowStock } from "@/lib/stock";
 type Draft = {
   category_id: string;
   name_ar: string;
-  name_fr: string;
-  description_ar: string;
-  description_fr: string;
+  wholesale_price: string;
   stock_quantity: string;
   is_available: boolean;
   is_published: boolean;
@@ -32,9 +30,7 @@ function draftFrom(product: AdminProduct | null, categories: Category[]): Draft 
   return {
     category_id: product?.category_id ?? (categories.length === 1 ? categories[0].id : ""),
     name_ar: product?.name_ar ?? "",
-    name_fr: product?.name_fr ?? "",
-    description_ar: product?.description_ar ?? "",
-    description_fr: product?.description_fr ?? "",
+    wholesale_price: product?.wholesale_price != null ? String(product.wholesale_price) : "",
     stock_quantity: product ? String(product.stock_quantity) : "",
     is_available: product?.is_available ?? true,
     is_published: product?.is_published ?? true,
@@ -61,6 +57,8 @@ export function ProductForm({
   const payload = {
     id: productId,
     ...draft,
+    // One name, in any language. The French name and descriptions are left
+    // out, so saving clears them.
     images,
   };
 
@@ -118,64 +116,32 @@ export function ProductForm({
           </select>
         </Field>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id={ids("name_ar")} label={dict.admin.nameAr} error={err("name_ar")}>
-            <input
-              id={ids("name_ar")}
-              dir="rtl"
-              lang="ar"
-              value={draft.name_ar}
-              maxLength={120}
-              onChange={(e) => set("name_ar", e.target.value)}
-              aria-invalid={!!errors.name_ar}
-              aria-describedby={describedBy("name_ar")}
-              className={inputClass}
-            />
-          </Field>
-          <Field id={ids("name_fr")} label={dict.admin.nameFr} error={err("name_fr")}>
-            <input
-              id={ids("name_fr")}
-              dir="ltr"
-              lang="fr"
-              value={draft.name_fr}
-              maxLength={120}
-              onChange={(e) => set("name_fr", e.target.value)}
-              aria-invalid={!!errors.name_fr}
-              aria-describedby={describedBy("name_fr")}
-              className={inputClass}
-            />
-          </Field>
-          <Field id={ids("description_ar")} label={dict.admin.descriptionAr} error={err("description_ar")}>
-            <textarea
-              id={ids("description_ar")}
-              dir="rtl"
-              lang="ar"
-              rows={4}
-              maxLength={2000}
-              value={draft.description_ar}
-              onChange={(e) => set("description_ar", e.target.value)}
-              aria-invalid={!!errors.description_ar}
-              aria-describedby={describedBy("description_ar")}
-              className={`${inputClass} py-2`}
-            />
-          </Field>
-          <Field id={ids("description_fr")} label={dict.admin.descriptionFr} error={err("description_fr")}>
-            <textarea
-              id={ids("description_fr")}
-              dir="ltr"
-              lang="fr"
-              rows={4}
-              maxLength={2000}
-              value={draft.description_fr}
-              onChange={(e) => set("description_fr", e.target.value)}
-              aria-invalid={!!errors.description_fr}
-              aria-describedby={describedBy("description_fr")}
-              className={`${inputClass} py-2`}
-            />
-          </Field>
-        </div>
+        <Field id={ids("name_ar")} label={dict.admin.productName} error={err("name_ar")}>
+          <input
+            id={ids("name_ar")}
+            dir="auto"
+            value={draft.name_ar}
+            maxLength={120}
+            onChange={(e) => set("name_ar", e.target.value)}
+            aria-invalid={!!errors.name_ar}
+            aria-describedby={describedBy("name_ar")}
+            className={inputClass}
+          />
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
+          <Field id={ids("wholesale_price")} label={dict.admin.price} hint={dict.admin.priceHint} error={err("wholesale_price")}>
+            <input
+              id={ids("wholesale_price")}
+              inputMode="decimal"
+              dir="ltr"
+              value={draft.wholesale_price}
+              onChange={(e) => set("wholesale_price", e.target.value)}
+              aria-invalid={!!errors.wholesale_price}
+              aria-describedby={describedBy("wholesale_price") ?? `${ids("wholesale_price")}-hint`}
+              className={inputClass}
+            />
+          </Field>
           <Field id={ids("stock_quantity")} label={dict.admin.stock} hint={dict.admin.stockHint} error={err("stock_quantity")}>
             <input
               id={ids("stock_quantity")}

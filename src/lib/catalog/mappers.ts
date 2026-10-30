@@ -4,7 +4,7 @@ import type { Category, Product, Variant } from "./types";
 export const CATEGORY_COLUMNS = "id, slug, name_ar, name_fr, sort_order";
 
 export const PRODUCT_COLUMNS = `
-  id, category_id, name_ar, name_fr, description_ar, description_fr,
+  id, category_id, name_ar, name_fr, description_ar, description_fr, wholesale_price,
   is_available, in_stock, is_published, sort_order, updated_at,
   product_variants (id, label_ar, label_fr, color_hex, is_available, sort_order),
   product_images (storage_path, sort_order)
@@ -25,6 +25,8 @@ export function mapProduct(row: ProductRow, env: SupabaseEnv): Product {
   const paths = [...(product_images ?? [])].sort(bySortOrder).map((i) => i.storage_path);
   return {
     ...rest,
+    // numeric columns may arrive as strings depending on the driver.
+    wholesale_price: rest.wholesale_price == null ? null : Number(rest.wholesale_price),
     variants: [...(product_variants ?? [])].sort(bySortOrder),
     image_paths: paths,
     images: paths.map((p) => publicImageUrl(env, p)),

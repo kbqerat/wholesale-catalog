@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useId, useState } from "react";
 import { Check, CircleSlash, Plus } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
-import { QuantityStepper } from "@/components/quantity-stepper";
+import { QuantityInput } from "@/components/quantity-input";
 import { Notice, buttonClass } from "@/components/ui";
 import { pickLocalized } from "@/lib/i18n/config";
 import { snapshotFromProduct } from "@/lib/selection/reducer";
@@ -18,8 +18,8 @@ export function AddToSelection({ product }: { product: Product }) {
   const [variantId, setVariantId] = useState<string | null>(
     availableVariants.length === 1 ? availableVariants[0].id : null,
   );
-  const [quantity, setQuantity] = useState(1);
-  const [status, setStatus] = useState<"idle" | "added" | "needsVariant">("idle");
+  const [quantity, setQuantity] = useState<number | null>(null);
+  const [status, setStatus] = useState<"idle" | "added" | "needsVariant" | "needsQuantity">("idle");
 
   if (!product.is_available) {
     return (
@@ -37,6 +37,10 @@ export function AddToSelection({ product }: { product: Product }) {
   function add() {
     if (hasVariants && !variantId) {
       setStatus("needsVariant");
+      return;
+    }
+    if (quantity === null) {
+      setStatus("needsQuantity");
       return;
     }
     dispatchSelection({ type: "add", item: snapshotFromProduct(product, variantId), quantity });
@@ -100,19 +104,23 @@ export function AddToSelection({ product }: { product: Product }) {
         <label htmlFor={`${id}-qty`} className="block text-sm font-semibold">
           {dict.product.quantity}
         </label>
-        <div className="flex flex-wrap items-center gap-3">
-          <QuantityStepper
-            id={`${id}-qty`}
-            value={quantity}
-            onChange={(q) => {
-              setQuantity(q);
-              setStatus("idle");
-            }}
-            label={dict.product.quantity}
-            decreaseLabel={dict.product.decrease}
-            increaseLabel={dict.product.increase}
-          />
-        </div>
+        <QuantityInput
+          id={`${id}-qty`}
+          value={quantity}
+          onChange={(q) => {
+            setQuantity(q);
+            setStatus("idle");
+          }}
+          label={dict.product.quantity}
+          placeholder={dict.product.quantity}
+          invalid={status === "needsQuantity"}
+          describedBy={status === "needsQuantity" ? `${id}-qty-error` : undefined}
+        />
+        {status === "needsQuantity" && (
+          <p id={`${id}-qty-error`} role="alert" className="text-sm font-medium text-danger">
+            {dict.product.quantityRequired}
+          </p>
+        )}
       </div>
 
       <button type="button" onClick={add} className={buttonClass("primary", "lg", "w-full sm:w-auto")}>
