@@ -17,6 +17,7 @@ export function product(overrides: Partial<Product> = {}): Product {
     description_fr: null,
     wholesale_price: 40,
     is_available: true,
+    stock_quantity: 30,
     in_stock: true,
     is_published: true,
     sort_order: 0,
@@ -40,6 +41,7 @@ export function snapshot(overrides: Partial<SelectionSnapshot> = {}): SelectionS
     variant_ar: "أسود",
     variant_fr: "Noir",
     image: null,
+    stock: null,
     ...overrides,
   };
 }

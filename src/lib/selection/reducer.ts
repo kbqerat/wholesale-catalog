@@ -15,6 +15,8 @@ export type SelectionSnapshot = {
   variant_ar: string | null;
   variant_fr: string | null;
   image: string | null;
+  /** Units in stock at the last check; null when not known yet. */
+  stock: number | null;
 };
 
 export type SelectionItem = SelectionSnapshot & {
@@ -145,7 +147,13 @@ export function snapshotFromProduct(product: Product, variantId: string | null):
     variant_ar: variant?.label_ar ?? null,
     variant_fr: variant?.label_fr ?? null,
     image: product.images[0] ?? null,
+    stock: product.stock_quantity,
   };
+}
+
+/** True when the client asks for more units than the stock has. */
+export function exceedsStock(item: SelectionItem): boolean {
+  return item.status === "ok" && item.stock !== null && item.quantity > item.stock;
 }
 
 export type SelectionSummary = {
@@ -176,6 +184,7 @@ const storedItemSchema = z.object({
   variant_ar: z.string().max(100).nullable(),
   variant_fr: z.string().max(100).nullable(),
   image: z.string().max(500).nullable(),
+  stock: z.number().nullable().optional().default(null),
   quantity: z.number(),
 });
 

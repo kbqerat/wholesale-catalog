@@ -5,13 +5,12 @@ export const CATEGORY_COLUMNS = "id, slug, name_ar, name_fr, sort_order";
 
 export const PRODUCT_COLUMNS = `
   id, category_id, name_ar, name_fr, description_ar, description_fr, wholesale_price,
-  is_available, in_stock, is_published, sort_order, updated_at,
+  is_available, stock_quantity, in_stock, is_published, sort_order, updated_at,
   product_variants (id, label_ar, label_fr, color_hex, is_available, sort_order),
   product_images (storage_path, sort_order)
 `;
 
-/** Admin reads also include the stock level (hidden from the public). */
-export const ADMIN_PRODUCT_COLUMNS = `${PRODUCT_COLUMNS}, stock_quantity`;
+export const ADMIN_PRODUCT_COLUMNS = PRODUCT_COLUMNS;
 
 type ProductRow = Omit<Product, "variants" | "images" | "image_paths"> & {
   product_variants: Variant[] | null;

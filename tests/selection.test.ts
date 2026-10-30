@@ -3,6 +3,7 @@ import {
   MAX_ITEMS,
   MAX_QUANTITY,
   clampQuantity,
+  exceedsStock,
   itemKey,
   parseStoredSelection,
   selectionReducer,
@@ -134,6 +135,17 @@ describe("selectionReducer: remove and clear", () => {
 });
 
 describe("selectionReducer: reconcile with live catalog", () => {
+  it("picks up the current stock and flags quantities above it", () => {
+    const [synced] = selectionReducer([item({ quantity: 31 })], {
+      type: "reconcile",
+      products: [product({ stock_quantity: 30 })],
+    });
+    expect(synced.stock).toBe(30);
+    expect(exceedsStock(synced)).toBe(true);
+    expect(exceedsStock({ ...synced, quantity: 30 })).toBe(false);
+    expect(exceedsStock(item({ quantity: 999 }))).toBe(false); // stock not known yet
+  });
+
   it("updates names from the catalog and keeps the quantity", () => {
     const next = selectionReducer([item({ quantity: 2 })], {
       type: "reconcile",

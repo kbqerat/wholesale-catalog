@@ -6,7 +6,7 @@ import { Check, CircleSlash, Plus } from "lucide-react";
 import { useI18n } from "@/components/i18n-provider";
 import { QuantityInput } from "@/components/quantity-input";
 import { Notice, buttonClass } from "@/components/ui";
-import { pickLocalized } from "@/lib/i18n/config";
+import { interpolate, pickLocalized } from "@/lib/i18n/config";
 import { snapshotFromProduct } from "@/lib/selection/reducer";
 import { dispatchSelection } from "@/lib/selection/store";
 import type { Product } from "@/lib/catalog/types";
@@ -33,6 +33,7 @@ export function AddToSelection({ product }: { product: Product }) {
   }
 
   const hasVariants = product.variants.length > 0;
+  const overStock = quantity !== null && quantity > product.stock_quantity;
 
   function add() {
     if (hasVariants && !variantId) {
@@ -43,6 +44,7 @@ export function AddToSelection({ product }: { product: Product }) {
       setStatus("needsQuantity");
       return;
     }
+    if (overStock) return;
     dispatchSelection({ type: "add", item: snapshotFromProduct(product, variantId), quantity });
     setStatus("added");
   }
@@ -112,17 +114,24 @@ export function AddToSelection({ product }: { product: Product }) {
             setStatus("idle");
           }}
           label={dict.product.chooseQuantity}
-          invalid={status === "needsQuantity"}
-          describedBy={status === "needsQuantity" ? `${id}-qty-error` : undefined}
+          invalid={status === "needsQuantity" || overStock}
+          describedBy={status === "needsQuantity" || overStock ? `${id}-qty-error` : undefined}
         />
-        {status === "needsQuantity" && (
+        {(status === "needsQuantity" || overStock) && (
           <p id={`${id}-qty-error`} role="alert" className="text-sm font-medium text-danger">
-            {dict.product.quantityRequired}
+            {overStock
+              ? interpolate(dict.product.notEnoughStock, { count: product.stock_quantity })
+              : dict.product.quantityRequired}
           </p>
         )}
       </div>
 
-      <button type="button" onClick={add} className={buttonClass("primary", "lg", "w-full sm:w-auto")}>
+      <button
+        type="button"
+        onClick={add}
+        disabled={overStock}
+        className={buttonClass("primary", "lg", "w-full sm:w-auto disabled:opacity-50")}
+      >
         <Plus aria-hidden className="size-5" />
         {dict.product.addToSelection}
       </button>

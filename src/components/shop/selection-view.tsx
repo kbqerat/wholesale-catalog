@@ -9,7 +9,7 @@ import { QuantityInput } from "@/components/quantity-input";
 import { EmptyState, Notice, buttonClass } from "@/components/ui";
 import { getSelectionProducts } from "@/lib/catalog/actions";
 import { pickLocalized } from "@/lib/i18n/config";
-import { summarize, type SelectionItem } from "@/lib/selection/reducer";
+import { exceedsStock, summarize, type SelectionItem } from "@/lib/selection/reducer";
 import { dispatchSelection, markSelectionSent, useSelection } from "@/lib/selection/store";
 import type { SentOrder } from "@/lib/selection/session";
 import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -42,6 +42,7 @@ export function SelectionView({ whatsappNumber }: { whatsappNumber: string | nul
   }, [hydrated, productIdsKey]);
 
   const summary = summarize(items);
+  const overStock = items.some(exceedsStock);
   // The WhatsApp link for exactly this list and its own order number. It is
   // final as rendered (nothing is changed at click time), so tapping, long
   // pressing or copying the link all send the same thing.
@@ -119,6 +120,10 @@ export function SelectionView({ whatsappNumber }: { whatsappNumber: string | nul
         ) : !whatsappUrl ? (
           <Notice tone="warn" role="status">
             {dict.selection.nothingToSend}
+          </Notice>
+        ) : overStock ? (
+          <Notice tone="danger" role="status">
+            {dict.selection.overStockBeforeSend}
           </Notice>
         ) : (
           <div className="space-y-2">
@@ -231,9 +236,18 @@ function SelectionRow({ item }: { item: SelectionItem }) {
               id={`qty-${item.key}`}
               size="sm"
               value={item.quantity}
-              onChange={(quantity) => dispatchSelection({ type: "setQuantity", key: item.key, quantity })}
+              onChange={(quantity) => {
+                if (quantity !== null) dispatchSelection({ type: "setQuantity", key: item.key, quantity });
+              }}
               label={t(dict.selection.quantityFor, { name })}
+              invalid={exceedsStock(item)}
+              describedBy={exceedsStock(item) ? `qty-${item.key}-error` : undefined}
             />
+            {exceedsStock(item) && (
+              <p id={`qty-${item.key}-error`} role="alert" className="text-sm font-medium text-danger">
+                {t(dict.product.notEnoughStock, { count: item.stock ?? 0 })}
+              </p>
+            )}
           </div>
         )}
       </div>

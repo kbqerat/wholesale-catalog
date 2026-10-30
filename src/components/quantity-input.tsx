@@ -4,9 +4,9 @@ import { useState } from "react";
 import { clampQuantity } from "@/lib/selection/reducer";
 
 /**
- * Plain quantity field: the client types the number of units. It can be
- * edited freely; the value is clamped to [1, MAX_QUANTITY] when the field
- * loses focus (or on Enter). Clearing it keeps the previous value, if any.
+ * Plain quantity field: the client types the number of units. Every
+ * keystroke reports the value (clamped to [1, MAX_QUANTITY]), or null when
+ * the field is empty, so warnings can show while typing.
  */
 export function QuantityInput({
   id,
@@ -20,7 +20,7 @@ export function QuantityInput({
 }: {
   id: string;
   value: number | null;
-  onChange: (value: number) => void;
+  onChange: (value: number | null) => void;
   label: string;
   invalid?: boolean;
   describedBy?: string;
@@ -29,11 +29,10 @@ export function QuantityInput({
 }) {
   const [draft, setDraft] = useState<string | null>(null);
 
-  function commit(raw: string) {
-    setDraft(null);
-    const parsed = Number(raw);
-    if (raw.trim() === "" || !Number.isFinite(parsed)) return;
-    onChange(clampQuantity(parsed));
+  function edit(raw: string) {
+    const digits = raw.replace(/[^0-9]/g, "").slice(0, 5);
+    setDraft(digits);
+    onChange(digits === "" ? null : clampQuantity(Number(digits)));
   }
 
   return (
@@ -51,11 +50,9 @@ export function QuantityInput({
       }`}
       value={draft ?? (value === null ? "" : String(value))}
       disabled={disabled}
-      onChange={(e) => setDraft(e.target.value.replace(/[^0-9]/g, "").slice(0, 5))}
-      onBlur={(e) => commit(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") commit(e.currentTarget.value);
-      }}
+      onChange={(e) => edit(e.target.value)}
+      // Show the clamped value once the client is done typing.
+      onBlur={() => setDraft(null)}
     />
   );
 }

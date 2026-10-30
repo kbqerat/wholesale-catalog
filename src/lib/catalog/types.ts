@@ -29,6 +29,8 @@ export type Product = {
    * In the admin: the seller's manual switch only.
    */
   is_available: boolean;
+  /** Units left in stock (public, so clients are warned before asking for more). */
+  stock_quantity: number;
   /** Derived in the database: stock_quantity > 0. */
   in_stock: boolean;
   is_published: boolean;
@@ -42,8 +44,8 @@ export type Product = {
   image_paths: string[];
 };
 
-/** Admin-only view of a product: includes the private stock level. */
-export type AdminProduct = Product & { stock_quantity: number };
+/** Admin view of a product (same fields; kept as a name for admin code). */
+export type AdminProduct = Product;
 
 export type OrderItem = {
   product_id: string;
