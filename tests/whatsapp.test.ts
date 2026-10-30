@@ -26,24 +26,14 @@ describe("normalizeWhatsAppNumber", () => {
 describe("buildWhatsAppMessage", () => {
   const orderUrl = "https://example.ma/ar/order?i=11111111111141118111111111111111.12";
 
-  it("is only a greeting, the order link and a closing line (Arabic)", () => {
-    const message = buildWhatsAppMessage({ orderUrl, dict: ar });
-    expect(message).toBe(
-      [ar.whatsapp.greeting, ar.whatsapp.intro, orderUrl, "", ar.whatsapp.closing].join("\n"),
-    );
-    expect(message.startsWith("السلام عليكم")).toBe(true);
-  });
-
-  it("adds the order number before the closing line", () => {
-    const lines = buildWhatsAppMessage({ orderUrl, orderRef: "K7PQ2M9X", dict: ar }).split("\n");
-    expect(lines.at(-2)).toBe("رقم الطلب: K7PQ2M9X");
-    expect(lines.at(-1)).toBe(ar.whatsapp.closing);
+  it("is one short line of text followed by the order link (Arabic)", () => {
+    expect(buildWhatsAppMessage({ orderUrl, dict: ar })).toBe(`السلام عليكم، صيفطلي هاد السلعة\n${orderUrl}`);
   });
 
   it("uses French wording on the French site", () => {
     const message = buildWhatsAppMessage({ orderUrl, dict: fr });
     expect(message.startsWith("Bonjour,")).toBe(true);
-    expect(message.split("\n")).toContain(orderUrl);
+    expect(message.split("\n")).toEqual([fr.whatsapp.message, orderUrl]);
   });
 
   it("puts the link alone on its own line so WhatsApp makes it clickable", () => {

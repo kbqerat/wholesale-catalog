@@ -50,7 +50,7 @@ export function SelectionView({ whatsappNumber }: { whatsappNumber: string | nul
     // Only used after hydration (see `hydrated` below), so `window` exists.
     if (!hydrated || !whatsappNumber || !ref || summary.sendable.length === 0) return null;
     const orderUrl = `${window.location.origin}${orderPath(locale, summary.sendable, ref)}`;
-    return buildWhatsAppUrl(whatsappNumber, buildWhatsAppMessage({ orderUrl, orderRef: ref, dict }));
+    return buildWhatsAppUrl(whatsappNumber, buildWhatsAppMessage({ orderUrl, dict }));
   }, [hydrated, whatsappNumber, ref, summary.sendable, locale, dict]);
 
   if (!hydrated) {

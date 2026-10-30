@@ -98,10 +98,7 @@ const fr: Dictionary = {
     resend: "WhatsApp ne s'est pas ouvert ? Renvoyer",
   },
   whatsapp: {
-    greeting: "Bonjour,",
-    intro: "Je souhaite commander les produits suivants en gros. Photos et quantités sur ce lien :",
-    ref: "N° de commande : {ref}",
-    closing: "Merci de me confirmer la disponibilité et la commande.",
+    message: "Bonjour, envoyez-moi ces articles",
   },
   order: {
     title: "Détails de la demande",

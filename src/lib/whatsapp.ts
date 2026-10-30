@@ -1,4 +1,3 @@
-import { interpolate } from "./i18n/config";
 import type { Dictionary } from "./i18n/dictionaries/ar";
 
 /**
@@ -17,24 +16,18 @@ export function normalizeWhatsAppNumber(raw: string | null | undefined): string 
 }
 
 /**
- * The WhatsApp message is deliberately short: a greeting, the link to the
- * order page (every product with its photo and quantity) and the order number.
- * Prices are agreed with the seller in the conversation.
+ * The WhatsApp message is deliberately short: one line of text, then the link
+ * to the order page (every product with its photo and quantity, and the order
+ * number in the link itself).
  */
 export function buildWhatsAppMessage({
   orderUrl,
-  orderRef,
   dict,
 }: {
   orderUrl: string;
-  orderRef?: string;
   dict: Pick<Dictionary, "whatsapp">;
 }): string {
-  const w = dict.whatsapp;
-  const lines = [w.greeting, w.intro, orderUrl, ""];
-  if (orderRef) lines.push(interpolate(w.ref, { ref: orderRef }));
-  lines.push(w.closing);
-  return lines.join("\n");
+  return `${dict.whatsapp.message}\n${orderUrl}`;
 }
 
 export function buildWhatsAppUrl(number: string, message: string): string {
