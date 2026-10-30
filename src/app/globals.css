@@ -21,6 +21,8 @@
   --color-warn: #7a4a06;
   --color-warn-soft: #fdf3dc;
   --color-focus: #1d4ed8;
+  /* Bright accent for prices; white text on it meets WCAG AA. */
+  --color-price: #d9480f;
 
   --font-sans: var(--font-plex-arabic), ui-sans-serif, system-ui, sans-serif;
 }

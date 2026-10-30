@@ -52,7 +52,7 @@ async function ProductDetail({ params }: Pick<PageProps<"/[locale]/products/[id]
             )}
             <h1 className="text-2xl font-bold leading-tight sm:text-3xl">{name}</h1>
             {product.wholesale_price != null && (
-              <p className="num text-xl font-bold text-brand">
+              <p className="num w-fit rounded-full bg-price px-4 py-1 text-xl font-bold text-white shadow-sm">
                 {interpolate(dict.product.unitPrice, { price: formatPrice(product.wholesale_price, locale) })}
               </p>
             )}

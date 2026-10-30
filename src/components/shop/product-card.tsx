@@ -50,7 +50,7 @@ export function ProductCard({
           </Link>
         </h3>
         {product.wholesale_price != null && (
-          <p className="num text-sm font-bold text-brand">
+          <p className="num self-start rounded-full bg-price px-2.5 py-0.5 text-sm font-bold text-white">
             {interpolate(dict.product.unitPrice, { price: formatPrice(product.wholesale_price, locale) })}
           </p>
         )}
