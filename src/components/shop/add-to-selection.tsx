@@ -102,7 +102,7 @@ export function AddToSelection({ product }: { product: Product }) {
 
       <div className="space-y-2">
         <label htmlFor={`${id}-qty`} className="block text-sm font-semibold">
-          {dict.product.quantity}
+          {dict.product.chooseQuantity}
         </label>
         <QuantityInput
           id={`${id}-qty`}
@@ -111,8 +111,7 @@ export function AddToSelection({ product }: { product: Product }) {
             setQuantity(q);
             setStatus("idle");
           }}
-          label={dict.product.quantity}
-          placeholder={dict.product.quantity}
+          label={dict.product.chooseQuantity}
           invalid={status === "needsQuantity"}
           describedBy={status === "needsQuantity" ? `${id}-qty-error` : undefined}
         />

@@ -46,6 +46,7 @@ const ar = {
     chooseVariant: "اختر النوع / اللون",
     variantRequired: "يرجى اختيار نوع قبل الإضافة.",
     quantity: "الكمية",
+    chooseQuantity: "إختار الكمية",
     quantityRequired: "يرجى إدخال الكمية قبل الإضافة.",
     addToSelection: "أضف إلى القائمة",
     added: "تمت الإضافة إلى قائمتك",

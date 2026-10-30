@@ -5,7 +5,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Horizontal row of product cards with a visible scrollbar and arrow
- * buttons. Arrows are physical (left/right), so they work the same in RTL.
+ * buttons, always shown (dimmed at the ends). Arrows are physical
+ * (left/right), so they work the same in RTL.
  */
 export function ProductSlider({
   label,
@@ -51,20 +52,19 @@ export function ProductSlider({
   };
 
   const arrow =
-    "absolute top-1/3 z-10 hidden size-10 items-center justify-center rounded-full border border-line-strong bg-surface/95 shadow-md hover:bg-canvas sm:flex";
+    "absolute top-1/3 z-10 flex size-10 items-center justify-center rounded-full border border-line-strong bg-surface/95 shadow-md hover:bg-canvas disabled:cursor-default disabled:opacity-40 disabled:hover:bg-surface/95";
 
   return (
     <div className="relative">
-      {canLeft && (
-        <button
-          type="button"
-          onClick={() => scroll(-1)}
-          aria-label={rtl ? nextLabel : prevLabel}
-          className={`${arrow} -left-3`}
-        >
-          <ChevronLeft aria-hidden className="size-5" />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={() => scroll(-1)}
+        disabled={!canLeft}
+        aria-label={rtl ? nextLabel : prevLabel}
+        className={`${arrow} left-1 sm:-left-3`}
+      >
+        <ChevronLeft aria-hidden className="size-5" />
+      </button>
       <ul
         ref={listRef}
         aria-label={label}
@@ -72,16 +72,15 @@ export function ProductSlider({
       >
         {children}
       </ul>
-      {canRight && (
-        <button
-          type="button"
-          onClick={() => scroll(1)}
-          aria-label={rtl ? prevLabel : nextLabel}
-          className={`${arrow} -right-3`}
-        >
-          <ChevronRight aria-hidden className="size-5" />
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={() => scroll(1)}
+        disabled={!canRight}
+        aria-label={rtl ? prevLabel : nextLabel}
+        className={`${arrow} right-1 sm:-right-3`}
+      >
+        <ChevronRight aria-hidden className="size-5" />
+      </button>
     </div>
   );
 }

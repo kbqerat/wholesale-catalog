@@ -233,7 +233,6 @@ function SelectionRow({ item }: { item: SelectionItem }) {
               value={item.quantity}
               onChange={(quantity) => dispatchSelection({ type: "setQuantity", key: item.key, quantity })}
               label={t(dict.selection.quantityFor, { name })}
-              placeholder={dict.product.quantity}
             />
           </div>
         )}

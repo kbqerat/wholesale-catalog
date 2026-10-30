@@ -13,7 +13,6 @@ export function QuantityInput({
   value,
   onChange,
   label,
-  placeholder,
   invalid = false,
   describedBy,
   disabled = false,
@@ -23,7 +22,6 @@ export function QuantityInput({
   value: number | null;
   onChange: (value: number) => void;
   label: string;
-  placeholder: string;
   invalid?: boolean;
   describedBy?: string;
   disabled?: boolean;
@@ -48,8 +46,7 @@ export function QuantityInput({
       aria-label={label}
       aria-invalid={invalid || undefined}
       aria-describedby={describedBy}
-      placeholder={placeholder}
-      className={`num ${size === "sm" ? "h-9 w-24" : "h-11 w-32"} rounded-lg border bg-surface px-3 text-center text-[15px] font-semibold placeholder:font-normal placeholder:text-muted disabled:opacity-50 ${
+      className={`num ${size === "sm" ? "h-9 w-24" : "h-11 w-32"} rounded-lg border bg-surface px-3 text-center text-[15px] font-semibold disabled:opacity-50 ${
         invalid ? "border-danger" : "border-line-strong"
       }`}
       value={draft ?? (value === null ? "" : String(value))}

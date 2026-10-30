@@ -50,6 +50,7 @@ const fr: Dictionary = {
     chooseVariant: "Choisissez un modèle / une couleur",
     variantRequired: "Veuillez choisir un modèle avant d'ajouter.",
     quantity: "Quantité",
+    chooseQuantity: "Choisissez la quantité",
     quantityRequired: "Veuillez saisir la quantité avant d'ajouter.",
     addToSelection: "Ajouter à la liste",
     added: "Ajouté à votre liste",
